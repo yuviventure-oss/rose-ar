@@ -15,7 +15,7 @@ body{
   overflow:hidden;
 }
 
-/* ========== SCENE SYSTEM ========== */
+/* ===== SCENE TRANSITIONS ===== */
 .screen{
   position:fixed;
   inset:0;
@@ -53,7 +53,7 @@ button{
   box-shadow:0 0 15px rgba(255,47,109,.6);
 }
 
-/* ========== STORY SCREENS ========== */
+/* Dialogue */
 .dialogue{
   max-width:320px;
   font-size:1.2rem;
@@ -74,14 +74,13 @@ button{
   100%{opacity:0;}
 }
 
-/* ========== BOX ANIMATION ========== */
+/* ===== BOX ANIMATION ===== */
 #box-area{
   position:relative;
   width:160px;
   height:140px;
   margin-bottom:20px;
 }
-
 .box-base{
   position:absolute;
   bottom:0;
@@ -90,7 +89,6 @@ button{
   background:#ff2f6d;
   border-radius:10px;
 }
-
 .box-lid{
   position:absolute;
   top:0;
@@ -101,26 +99,21 @@ button{
   transform-origin:bottom center;
   transition:transform 1s ease;
 }
-
 #box-area.open .box-lid{
   transform:rotateX(120deg);
 }
-
-/* Glow effect */
 .glow{
   position:absolute;
   inset:-40px;
   background:radial-gradient(circle, rgba(255,47,109,.8), transparent 70%);
   opacity:0;
   transition:opacity 1s ease;
-  pointer-events:none;
 }
-
 #box-area.open .glow{
   opacity:1;
 }
 
-/* ========== INTRO ========== */
+/* Intro */
 #intro{
   background:radial-gradient(circle at top,#2a0015,#000);
 }
@@ -129,7 +122,7 @@ button{
   text-shadow:0 0 15px rgba(255,47,109,.8);
 }
 
-/* ========== CAMERA EXPERIENCE ========== */
+/* ===== CAMERA EXPERIENCE ===== */
 video{
   position:fixed;
   inset:0;
@@ -138,6 +131,7 @@ video{
   object-fit:cover;
   display:none;
 }
+
 model-viewer{
   position:fixed;
   inset:0;
@@ -195,21 +189,21 @@ model-viewer{
 <div id="dialogue" class="screen">
   <p class="dialogue">
     “I’ve reached your location.<br>
-    Come meet me… I’m waiting.”
+    Aja jldi.”
   </p>
-  <button onclick="goTo('cutscene')">I’m coming ❤️</button>
-  <button onclick="goTo('cutscene')">Where are you? 👀</button>
+  <button onclick="goTo('cutscene')">10 minit rukja bas aagayi</button>
+  <button onclick="goTo('cutscene')">5 minit rukja bas agayi</button>
 </div>
 
 <!-- SCENE 3 -->
 <div id="cutscene" class="screen">
-  <p>She walks toward you…</p>
+  <p>You walks toward Him…</p>
   <button onclick="goTo('gift')">Continue</button>
 </div>
 
 <!-- SCENE 4 -->
 <div id="gift" class="screen">
-  <p>“Take this…”</p>
+  <p>“haina.. haina mai tere liye kuch laya…”</p>
   <button onclick="goTo('box')">Take the gift 🎁</button>
 </div>
 
@@ -220,7 +214,7 @@ model-viewer{
     <div class="box-lid"></div>
     <div class="box-base"></div>
   </div>
-  <button onclick="openBox()">Open</button>
+  <button onclick="openBox()">Open 🎁</button>
 </div>
 
 <!-- INTRO -->
@@ -232,8 +226,8 @@ model-viewer{
 
 <!-- CAMERA EXPERIENCE -->
 <video id="camera" autoplay playsinline muted></video>
-<div id="love-text">For Srushti ❤️</div>
-<button id="music-btn" onclick="toggleMusic()">🎵 Play Music</button>
+<div id="love-text">haina ye le.. tere liye.. happy rose day ❤️</div>
+<button id="music-btn" onclick="toggleMusic()">⏸ Pause Music</button>
 
 <audio id="music" loop>
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c4d65b0b3.mp3">
@@ -247,28 +241,46 @@ model-viewer{
 </model-viewer>
 
 <script>
-let current=document.querySelector('.screen.active');
+/* DOM REFERENCES */
+const camera = document.getElementById('camera');
+const loveText = document.getElementById('love-text');
+const musicBtn = document.getElementById('music-btn');
+const music = document.getElementById('music');
+const rose = document.getElementById('rose');
 
+let current = document.querySelector('.screen.active');
+let playing = false;
+
+/* Scene navigation */
 function goTo(id){
   current.classList.remove('active');
   current.classList.add('exit');
   setTimeout(()=>{
     current.classList.remove('exit');
-    current=document.getElementById(id);
+    current = document.getElementById(id);
     current.classList.add('active');
   },600);
 }
 
-/* BOX OPEN */
+/* Box open → auto music */
 function openBox(){
-  const box=document.getElementById('box-area');
+  const box = document.getElementById('box-area');
   box.classList.add('open');
+
+  if (!playing) {
+    music.currentTime = 0;
+    music.play();
+    playing = true;
+    musicBtn.textContent = "⏸ Pause Music";
+  }
+
   setTimeout(()=>goTo('intro'),1600);
 }
 
-/* START EXPERIENCE */
+/* Start camera experience */
 function startExperience(){
   current.classList.remove('active');
+
   camera.style.display='block';
   rose.style.display='block';
   loveText.style.display='block';
@@ -278,30 +290,28 @@ function startExperience(){
     .then(stream=>camera.srcObject=stream);
 }
 
-/* MUSIC + PULSE */
-let playing=false;
-const music=document.getElementById('music');
-const rose=document.getElementById('rose');
-const musicBtn=document.getElementById('music-btn');
-
+/* Music toggle */
 function toggleMusic(){
-  if(!playing){
-    music.play(); playing=true;
-    musicBtn.textContent="⏸ Pause Music";
-  }else{
-    music.pause(); playing=false;
-    musicBtn.textContent="🎵 Play Music";
+  if (!playing) {
+    music.play();
+    playing = true;
+    musicBtn.textContent = "⏸ Pause Music";
+  } else {
+    music.pause();
+    playing = false;
+    musicBtn.textContent = "🎵 Play Music";
     rose.style.setProperty('--pulse-scale',1);
   }
 }
 
+/* Rose pulse synced to music */
 music.addEventListener('timeupdate',()=>{
   if(!playing) return;
   const beat=Math.abs(Math.sin(music.currentTime*2.5));
   rose.style.setProperty('--pulse-scale',1+beat*0.06);
 });
 
-/* HEARTS */
+/* Floating hearts */
 setInterval(()=>{
   const h=document.createElement('div');
   h.className='heart';
