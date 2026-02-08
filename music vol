@@ -4,7 +4,9 @@
 <meta charset="UTF-8" />
 <title>For Srushti ❤️</title>
 
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
 
 <style>
 body{
@@ -15,7 +17,7 @@ body{
   overflow:hidden;
 }
 
-/* ===== SCENE TRANSITIONS ===== */
+/* ---------- SCENE TRANSITIONS ---------- */
 .screen{
   position:fixed;
   inset:0;
@@ -40,7 +42,6 @@ body{
   transform:translateY(-30px);
 }
 
-/* Buttons */
 button{
   margin:12px;
   padding:12px 26px;
@@ -53,14 +54,14 @@ button{
   box-shadow:0 0 15px rgba(255,47,109,.6);
 }
 
-/* Dialogue */
+/* ---------- DIALOGUE ---------- */
 .dialogue{
   max-width:320px;
   font-size:1.2rem;
   opacity:.9;
 }
 
-/* Cutscene */
+/* ---------- CUTSCENE ---------- */
 #cutscene{
   background:radial-gradient(circle,#220010,#000);
 }
@@ -74,7 +75,7 @@ button{
   100%{opacity:0;}
 }
 
-/* ===== BOX ANIMATION ===== */
+/* ---------- BOX ANIMATION ---------- */
 #box-area{
   position:relative;
   width:160px;
@@ -113,7 +114,7 @@ button{
   opacity:1;
 }
 
-/* Intro */
+/* ---------- INTRO ---------- */
 #intro{
   background:radial-gradient(circle at top,#2a0015,#000);
 }
@@ -122,7 +123,7 @@ button{
   text-shadow:0 0 15px rgba(255,47,109,.8);
 }
 
-/* ===== CAMERA EXPERIENCE ===== */
+/* ---------- CAMERA EXPERIENCE ---------- */
 video{
   position:fixed;
   inset:0;
@@ -143,7 +144,7 @@ model-viewer{
   transition:transform .15s ease-out;
 }
 
-/* Floating text */
+/* ---------- FLOATING TEXT ---------- */
 #love-text{
   position:fixed;
   bottom:18%;
@@ -155,7 +156,7 @@ model-viewer{
   display:none;
 }
 
-/* Music button */
+/* ---------- MUSIC CONTROLS ---------- */
 #music-btn{
   position:fixed;
   top:20px;
@@ -163,7 +164,15 @@ model-viewer{
   display:none;
 }
 
-/* Hearts */
+#volume{
+  position:fixed;
+  top:70px;
+  right:20px;
+  width:120px;
+  display:none;
+}
+
+/* ---------- HEARTS ---------- */
 .heart{
   position:fixed;
   bottom:-20px;
@@ -189,25 +198,25 @@ model-viewer{
 <div id="dialogue" class="screen">
   <p class="dialogue">
     “I’ve reached your location.<br>
-    Aja jldi.”
+   Aja jldi ruka hu.”
   </p>
-  <button onclick="goTo('cutscene')">10 minit rukja bas aagayi</button>
-  <button onclick="goTo('cutscene')">5 minit rukja bas agayi</button>
+  <button onclick="goTo('cutscene')">10 minit rukja</button>
+  <button onclick="goTo('cutscene')">5 minit ruka</button>
 </div>
 
 <!-- SCENE 3 -->
 <div id="cutscene" class="screen">
-  <p>You walks toward Him…</p>
+  <p>You walks toward Her…</p>
   <button onclick="goTo('gift')">Continue</button>
 </div>
 
 <!-- SCENE 4 -->
 <div id="gift" class="screen">
-  <p>“haina.. haina mai tere liye kuch laya…”</p>
+  <p>“Take this…”</p>
   <button onclick="goTo('box')">Take the gift 🎁</button>
 </div>
 
-<!-- SCENE 5 – BOX -->
+<!-- SCENE 5 -->
 <div id="box" class="screen">
   <div id="box-area">
     <div class="glow"></div>
@@ -226,11 +235,13 @@ model-viewer{
 
 <!-- CAMERA EXPERIENCE -->
 <video id="camera" autoplay playsinline muted></video>
-<div id="love-text">haina ye le.. tere liye.. happy rose day ❤️</div>
-<button id="music-btn" onclick="toggleMusic()">⏸ Pause Music</button>
+<div id="love-text">For Srushti ❤️</div>
 
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c4d65b0b3.mp3">
+<button id="music-btn" onclick="toggleMusic()">⏸ Pause Music</button>
+<input id="volume" type="range" min="0" max="1" step="0.01" value="0.7">
+
+<audio id="music" preload="auto" loop>
+  <source src="music.mp3" type="audio/mpeg">
 </audio>
 
 <model-viewer id="rose"
@@ -241,17 +252,18 @@ model-viewer{
 </model-viewer>
 
 <script>
-/* DOM REFERENCES */
+/* ---------- DOM ---------- */
 const camera = document.getElementById('camera');
 const loveText = document.getElementById('love-text');
 const musicBtn = document.getElementById('music-btn');
+const volume = document.getElementById('volume');
 const music = document.getElementById('music');
 const rose = document.getElementById('rose');
 
 let current = document.querySelector('.screen.active');
 let playing = false;
 
-/* Scene navigation */
+/* ---------- SCENE NAV ---------- */
 function goTo(id){
   current.classList.remove('active');
   current.classList.add('exit');
@@ -262,22 +274,22 @@ function goTo(id){
   },600);
 }
 
-/* Box open → auto music */
+/* ---------- BOX OPEN → AUTO MUSIC ---------- */
 function openBox(){
-  const box = document.getElementById('box-area');
-  box.classList.add('open');
+  document.getElementById('box-area').classList.add('open');
 
-  if (!playing) {
-    music.currentTime = 0;
-    music.play();
+  music.volume = volume.value;
+  music.currentTime = 0;
+
+  music.play().then(()=>{
     playing = true;
     musicBtn.textContent = "⏸ Pause Music";
-  }
+  });
 
   setTimeout(()=>goTo('intro'),1600);
 }
 
-/* Start camera experience */
+/* ---------- START EXPERIENCE ---------- */
 function startExperience(){
   current.classList.remove('active');
 
@@ -285,33 +297,38 @@ function startExperience(){
   rose.style.display='block';
   loveText.style.display='block';
   musicBtn.style.display='block';
+  volume.style.display='block';
 
   navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})
     .then(stream=>camera.srcObject=stream);
 }
 
-/* Music toggle */
+/* ---------- MUSIC CONTROLS ---------- */
 function toggleMusic(){
-  if (!playing) {
+  if(!playing){
     music.play();
-    playing = true;
-    musicBtn.textContent = "⏸ Pause Music";
-  } else {
+    playing=true;
+    musicBtn.textContent="⏸ Pause Music";
+  }else{
     music.pause();
-    playing = false;
-    musicBtn.textContent = "🎵 Play Music";
+    playing=false;
+    musicBtn.textContent="🎵 Play Music";
     rose.style.setProperty('--pulse-scale',1);
   }
 }
 
-/* Rose pulse synced to music */
-music.addEventListener('timeupdate',()=>{
-  if(!playing) return;
-  const beat=Math.abs(Math.sin(music.currentTime*2.5));
-  rose.style.setProperty('--pulse-scale',1+beat*0.06);
+volume.addEventListener('input',()=>{
+  music.volume = volume.value;
 });
 
-/* Floating hearts */
+/* ---------- ROSE PULSE ---------- */
+music.addEventListener('timeupdate',()=>{
+  if(!playing) return;
+  const beat = Math.abs(Math.sin(music.currentTime*2.5));
+  rose.style.setProperty('--pulse-scale',1 + beat*0.06);
+});
+
+/* ---------- HEARTS ---------- */
 setInterval(()=>{
   const h=document.createElement('div');
   h.className='heart';
