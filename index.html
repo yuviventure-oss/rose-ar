@@ -1,75 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Camera Rose</title>
+<meta charset="UTF-8" />
+<title>For Srushti ❤️</title>
 
-  <!-- Model Viewer -->
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-  </script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-    }
+<style>
+body{
+  margin:0;
+  font-family: Georgia, 'Times New Roman', serif;
+  background:black;
+  color:white;
+  overflow:hidden;
+}
 
-    /* Camera video */
-    video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      z-index: 1;
-    }
+/* ========== SCENE SYSTEM ========== */
+.screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+  opacity:0;
+  transform:translateY(30px);
+  pointer-events:none;
+  transition:opacity .6s ease, transform .6s ease;
+}
+.screen.active{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+.screen.exit{
+  opacity:0;
+  transform:translateY(-30px);
+}
 
-    /* 3D model on top */
-    model-viewer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 2;
-      background: transparent;
-      pointer-events: auto;
-    }
-  </style>
+/* Buttons */
+button{
+  margin:12px;
+  padding:12px 26px;
+  font-size:1rem;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  background:#ff2f6d;
+  color:white;
+  box-shadow:0 0 15px rgba(255,47,109,.6);
+}
+
+/* ========== STORY SCREENS ========== */
+.dialogue{
+  max-width:320px;
+  font-size:1.2rem;
+  opacity:.9;
+}
+
+/* Cutscene */
+#cutscene{
+  background:radial-gradient(circle,#220010,#000);
+}
+#cutscene p{
+  font-size:1.4rem;
+  animation:fadeWalk 3s infinite;
+}
+@keyframes fadeWalk{
+  0%{opacity:0;}
+  50%{opacity:1;}
+  100%{opacity:0;}
+}
+
+/* ========== BOX ANIMATION ========== */
+#box-area{
+  position:relative;
+  width:160px;
+  height:140px;
+  margin-bottom:20px;
+}
+
+.box-base{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:80px;
+  background:#ff2f6d;
+  border-radius:10px;
+}
+
+.box-lid{
+  position:absolute;
+  top:0;
+  width:100%;
+  height:40px;
+  background:#ff5f8f;
+  border-radius:10px;
+  transform-origin:bottom center;
+  transition:transform 1s ease;
+}
+
+#box-area.open .box-lid{
+  transform:rotateX(120deg);
+}
+
+/* Glow effect */
+.glow{
+  position:absolute;
+  inset:-40px;
+  background:radial-gradient(circle, rgba(255,47,109,.8), transparent 70%);
+  opacity:0;
+  transition:opacity 1s ease;
+  pointer-events:none;
+}
+
+#box-area.open .glow{
+  opacity:1;
+}
+
+/* ========== INTRO ========== */
+#intro{
+  background:radial-gradient(circle at top,#2a0015,#000);
+}
+#intro h1{
+  color:#ff2f6d;
+  text-shadow:0 0 15px rgba(255,47,109,.8);
+}
+
+/* ========== CAMERA EXPERIENCE ========== */
+video{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+model-viewer{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:none;
+  --pulse-scale:1;
+  transform:scale(var(--pulse-scale));
+  transition:transform .15s ease-out;
+}
+
+/* Floating text */
+#love-text{
+  position:fixed;
+  bottom:18%;
+  width:100%;
+  text-align:center;
+  font-size:2.2rem;
+  color:#ff2f6d;
+  text-shadow:0 0 12px rgba(255,47,109,.7);
+  display:none;
+}
+
+/* Music button */
+#music-btn{
+  position:fixed;
+  top:20px;
+  right:20px;
+  display:none;
+}
+
+/* Hearts */
+.heart{
+  position:fixed;
+  bottom:-20px;
+  font-size:20px;
+  animation:floatHeart linear forwards;
+}
+@keyframes floatHeart{
+  to{transform:translateY(-110vh) scale(1.6);opacity:0;}
+}
+</style>
 </head>
 
 <body>
 
-  <!-- Camera feed -->
-  <video id="camera" autoplay playsinline muted></video>
+<!-- SCENE 1 -->
+<div id="call" class="screen active">
+  <h1>📞 Incoming Call</h1>
+  <p>Anikesh</p>
+  <button onclick="goTo('dialogue')">Pick up</button>
+</div>
 
-  <!-- 3D Rose -->
-  <model-viewer
-    src="rose.glb"
-    camera-controls
-    auto-rotate
-    exposure="1.5"
-    shadow-intensity="0"
-    environment-image="neutral">
-  </model-viewer>
+<!-- SCENE 2 -->
+<div id="dialogue" class="screen">
+  <p class="dialogue">
+    “I’ve reached your location.<br>
+    Come meet me… I’m waiting.”
+  </p>
+  <button onclick="goTo('cutscene')">I’m coming ❤️</button>
+  <button onclick="goTo('cutscene')">Where are you? 👀</button>
+</div>
 
-  <script>
-    const video = document.getElementById("camera");
+<!-- SCENE 3 -->
+<div id="cutscene" class="screen">
+  <p>She walks toward you…</p>
+  <button onclick="goTo('gift')">Continue</button>
+</div>
 
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-      audio: false
-    })
-    .then(stream => {
-      video.srcObject = stream;
-    })
-    .catch(err => {
-      alert("Camera access denied");
-    });
-  </script>
+<!-- SCENE 4 -->
+<div id="gift" class="screen">
+  <p>“Take this…”</p>
+  <button onclick="goTo('box')">Take the gift 🎁</button>
+</div>
+
+<!-- SCENE 5 – BOX -->
+<div id="box" class="screen">
+  <div id="box-area">
+    <div class="glow"></div>
+    <div class="box-lid"></div>
+    <div class="box-base"></div>
+  </div>
+  <button onclick="openBox()">Open</button>
+</div>
+
+<!-- INTRO -->
+<div id="intro" class="screen">
+  <h1>For Srushti ❤️</h1>
+  <p>A small surprise, made with love</p>
+  <button onclick="startExperience()">Begin the Surprise ✨</button>
+</div>
+
+<!-- CAMERA EXPERIENCE -->
+<video id="camera" autoplay playsinline muted></video>
+<div id="love-text">For Srushti ❤️</div>
+<button id="music-btn" onclick="toggleMusic()">🎵 Play Music</button>
+
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c4d65b0b3.mp3">
+</audio>
+
+<model-viewer id="rose"
+  src="rose.glb"
+  camera-controls
+  auto-rotate
+  exposure="1.5">
+</model-viewer>
+
+<script>
+let current=document.querySelector('.screen.active');
+
+function goTo(id){
+  current.classList.remove('active');
+  current.classList.add('exit');
+  setTimeout(()=>{
+    current.classList.remove('exit');
+    current=document.getElementById(id);
+    current.classList.add('active');
+  },600);
+}
+
+/* BOX OPEN */
+function openBox(){
+  const box=document.getElementById('box-area');
+  box.classList.add('open');
+  setTimeout(()=>goTo('intro'),1600);
+}
+
+/* START EXPERIENCE */
+function startExperience(){
+  current.classList.remove('active');
+  camera.style.display='block';
+  rose.style.display='block';
+  loveText.style.display='block';
+  musicBtn.style.display='block';
+
+  navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})
+    .then(stream=>camera.srcObject=stream);
+}
+
+/* MUSIC + PULSE */
+let playing=false;
+const music=document.getElementById('music');
+const rose=document.getElementById('rose');
+const musicBtn=document.getElementById('music-btn');
+
+function toggleMusic(){
+  if(!playing){
+    music.play(); playing=true;
+    musicBtn.textContent="⏸ Pause Music";
+  }else{
+    music.pause(); playing=false;
+    musicBtn.textContent="🎵 Play Music";
+    rose.style.setProperty('--pulse-scale',1);
+  }
+}
+
+music.addEventListener('timeupdate',()=>{
+  if(!playing) return;
+  const beat=Math.abs(Math.sin(music.currentTime*2.5));
+  rose.style.setProperty('--pulse-scale',1+beat*0.06);
+});
+
+/* HEARTS */
+setInterval(()=>{
+  const h=document.createElement('div');
+  h.className='heart';
+  h.textContent='💖';
+  h.style.left=Math.random()*100+'vw';
+  h.style.animationDuration=4+Math.random()*3+'s';
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),7000);
+},600);
+</script>
 
 </body>
 </html>
