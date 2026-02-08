@@ -1,18 +1,75 @@
-<model-viewer
-  src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-  ios-src="rose.usdz"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Camera Rose</title>
 
-  ar
-  ar-modes="scene-viewer quick-look webxr"
-  ar-scale="fixed"
-  ar-placement="floor"
+  <!-- Model Viewer -->
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
 
-  camera-controls
-  disable-zoom
-  auto-rotate="false"
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
 
-  environment-image="neutral"
-  exposure="1.2"
+    /* Camera video */
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 1;
+    }
 
-  style="width:100vw; height:100vh;">
-</model-viewer>
+    /* 3D model on top */
+    model-viewer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2;
+      background: transparent;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Camera feed -->
+  <video id="camera" autoplay playsinline muted></video>
+
+  <!-- 3D Rose -->
+  <model-viewer
+    src="rose.glb"
+    camera-controls
+    auto-rotate
+    exposure="1.5"
+    shadow-intensity="0"
+    environment-image="neutral">
+  </model-viewer>
+
+  <script>
+    const video = document.getElementById("camera");
+
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+      audio: false
+    })
+    .then(stream => {
+      video.srcObject = stream;
+    })
+    .catch(err => {
+      alert("Camera access denied");
+    });
+  </script>
+
+</body>
+</html>
